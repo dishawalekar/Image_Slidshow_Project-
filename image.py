@@ -1,5 +1,6 @@
 from itertools import cycle
 from PIL import Image, ImageTk
+import time
 import tkinter as tk
 
 root=tk.Tk()
@@ -21,18 +22,23 @@ images=[Image.open(path).resize(image_size) for path in image_path]
 photo_images=[ImageTk.PhotoImage(image) for image in images]
 
 # Create an iterator
-image_cycle = cycle(photo_images)
-
 label = tk.Label(root)
 label.pack()
 
 def update_image():
-    photo = next(image_cycle)
-    label.config(image=photo)
-    label.image = photo  # Prevent garbage collection
-    root.after(2000, update_image)  # Change image every 2 seconds
+    for photo_image in photo_images:
+        label.config(image=photo_image) 
+        label.update()
+        time.sleep(3) # Prevent garbage collection
 
-update_image()
+slideshow=cycle(photo_images)
+
+def start_slideshow():
+    for _ in range (len(image_path)):
+        update_image()
+
+play_button=tk.Button(root,text="Play Slideshow",command=start_slideshow)
+play_button.pack() 
 
 root.mainloop()
 
